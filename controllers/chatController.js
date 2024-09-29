@@ -11,8 +11,45 @@ const convertTimestampToDate = (timestamp) =>{
     return `${day}-${month}-${year}`; // Output: "29-09-2024"
   }
   
+  const saveUserJournal = async(msg) =>{
+    try{
+        const {id,username} = msg.from;
+        const {text,date} = msg;
+        const convertedDate = convertTimestampToDate(date);
+        const journalAdded = await userJournal.findOne({
+                userName:username,
+                date:convertedDate
+        });
+        if(!journalAdded){
+            const newJournal = new userJournal({
+                userName:username,
+                date:convertedDate,
+                message:text,
+                messageId:id
+            });
+            await newJournal.save();
+            console.log('Journal saved');
+        }else{
+            journalAdded.message+=text;
+            await journalAdded.save();
+            console.log('Journal updated');
+        }
+    }catch(error){
+        console.log(error);
+    }
+  }
 
+  const getSingleUserJournal = async (message) =>{
+    try {
+        const {username,id} = message.from;
+        // const text
+    } catch (error) {
+        
+    }
+  }
   
-const get_journal = async (msg) =>{
-    
+
+
+module.exports = {
+    saveUserJournal
 }

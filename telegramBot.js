@@ -2,6 +2,7 @@ const dotenv = require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const token =process.env.TelegramBotToken;
 const {saveTelegramUser} = require('./controllers/userController');
+const {saveUserJournal} = require('./controllers/chatController');
 
 
 const bot = new TelegramBot(token, {polling: true});
@@ -27,6 +28,6 @@ bot.on('message', (msg) => {
         bot.sendMessage(chatId, commandMessage,{parse_mode: 'HTML'});
   } 
   else {
-    bot.sendMessage(chatId, 'You said: ' + messageText);
+    saveUserJournal(msg);
   }
 });
