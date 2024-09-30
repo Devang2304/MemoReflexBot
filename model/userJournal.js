@@ -16,6 +16,10 @@ const userMessages = new mongoose.Schema({
     messageId:{
         type: Number,
         required: true
+    },
+    dataInNumber:{
+        type: Number,
+        required: true
     }
 
 })
