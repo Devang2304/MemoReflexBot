@@ -23,7 +23,7 @@ const sendReminderToAllUsers =async ()=>{
   }
 };
 
-const task=  cron.schedule('45 17 * * *', () => {
+const task=  cron.schedule('00 20 * * *', () => {
   sendReminderToAllUsers();
   console.log('Sending Reminder to Users');
 },{
