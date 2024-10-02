@@ -6,7 +6,7 @@ const token =process.env.TelegramBotToken;
 const {saveTelegramUser} = require('./controllers/userController');
 const User = require('./model/User');
 const userJournal = require('./model/userJournal');
-const {saveUserJournal,getSingleUserJournal,getUserJournalRange,createPDF,cronJobKeepServerLive,deleteUser} = require('./controllers/chatController');
+const {saveUserJournal,getSingleUserJournal,getUserJournalRange,createPDF,deleteUser} = require('./controllers/chatController');
 
 const bot = new TelegramBot(token, {polling: true});
 
@@ -35,7 +35,7 @@ const task=  cron.schedule('0 20 * * *', () => {
 
 task.start();
 
-cronJobKeepServerLive.start();
+// cronJobKeepServerLive.start();
 
 
 

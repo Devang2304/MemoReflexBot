@@ -2,9 +2,9 @@ const User = require('../model/User');
 const userJournal = require('../model/userJournal');
 const PDFDocument = require('pdfkit');
 const fs = require('fs-extra');
-const cron = require('node-cron');
-const axios = require('axios');
 const dotenv = require('dotenv').config();
+// const cron = require('node-cron');
+// const axios = require('axios');
 
 
 
@@ -115,21 +115,21 @@ const convertTimestampToDate = (timestamp) =>{
     })
  }
 
- const  pingServer= () => {
-  console.log(process.env.BACKEND_URI);
-    axios.get(process.env.BACKEND_URI)
-      .then(response => {
-        console.log('Ping successful:', response.status); 
-      })
-      .catch(error => {
-        console.error('Error pinging server:', error); 
-      });
-  }
+//  const  pingServer= () => {
+//   console.log(process.env.BACKEND_URI);
+//     axios.get(process.env.BACKEND_URI)
+//       .then(response => {
+//         console.log('Ping successful:', response.status); 
+//       })
+//       .catch(error => {
+//         console.error('Error pinging server:', error); 
+//       });
+//   }
 
- const cronJobKeepServerLive =cron.schedule('15 * * * *', () => {
-    console.log('Keeping server live, CronJob Enabled to avoid server spin down');
-    pingServer();
-  });
+//  const cronJobKeepServerLive =cron.schedule('* * * * *', () => {
+//     console.log('Keeping server live, CronJob Enabled to avoid server spin down');
+//     pingServer();
+//   });
 
   const deleteUser = async (chatId,username) =>{
     try {
@@ -146,6 +146,6 @@ module.exports = {
     getSingleUserJournal,
     getUserJournalRange,
     createPDF,
-    cronJobKeepServerLive,
+    // cronJobKeepServerLive,
     deleteUser
 }
