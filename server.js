@@ -23,5 +23,6 @@ connectDb().then(()=>{
 
 app.get('/cronJob',(req,res)=>{
     console.log("Cron job triggered");
+    res.status(200).send("Cron job triggered");
 })
 
