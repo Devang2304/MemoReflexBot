@@ -2,6 +2,7 @@ const User = require('../model/User');
 const userJournal = require('../model/userJournal');
 const PDFDocument = require('pdfkit');
 const fs = require('fs-extra');
+const cron = require('node-cron');
 
 
 
@@ -14,7 +15,7 @@ const convertTimestampToDate = (timestamp) =>{
   
     return `${day}-${month}-${year}`; // Output: "29-09-2024"
   }
-//   console.log(convertTimestampToDate(1727705698));
+
 
   const convertDateToTimestamp =(dateString,endOfDay = false) =>{
     const [day, month, year] = dateString.split("-");
@@ -25,7 +26,6 @@ const convertTimestampToDate = (timestamp) =>{
         dateObj.setHours(23, 59, 59, 999);
     }
     const timestamp = dateObj.getTime();
-    // console.log(timestamp);
     return timestamp/1000;
   }
   
@@ -35,14 +35,12 @@ const convertTimestampToDate = (timestamp) =>{
     try{
         const {id,username} = msg.from;
         const {text,date} = msg;
-        // console.log(date);
         const convertedDate = convertTimestampToDate(date);
         const journalAdded = await userJournal.findOne({
                 userName:username,
                 date:convertedDate
         });
         if(!journalAdded){
-            console.log("date in timestamp",date);
             const newJournal = new userJournal({
                 userName:username,
                 date:convertedDate,
@@ -53,7 +51,7 @@ const convertTimestampToDate = (timestamp) =>{
             await newJournal.save();
             console.log('Journal saved');
         }else{
-            journalAdded.message+=text;
+            journalAdded.message+=" "+text;
             await journalAdded.save();
             console.log('Journal updated');
         }
@@ -64,7 +62,6 @@ const convertTimestampToDate = (timestamp) =>{
 
   const getSingleUserJournal = async (chatId,date) =>{
     try {
-        // const convertedDate = convertTimestampToDate(date);
         const journal= await userJournal.findOne({
             messageId:chatId,
             date:date
@@ -91,7 +88,6 @@ const convertTimestampToDate = (timestamp) =>{
             dataInNumber:{$gte:startTimestamp,$lte:endTimestamp}
         });
         if(journals.length>0){
-            console.log("Journals pdf =>",journals);
             const journalMessages = journals.map(journal=>`${journal.date}:\n${journal.message}\n\n`).join('');
             return journalMessages;
         }else{
@@ -117,14 +113,15 @@ const convertTimestampToDate = (timestamp) =>{
     })
  }
 
-  
-  
-  
+ const cronJobKeepServerLive =cron.schedule('15 * * * *', () => {
+    console.log('Keeping server live, CronJob Enabled to avoid server spin down');
+  });
 
 
 module.exports = {
     saveUserJournal,
     getSingleUserJournal,
     getUserJournalRange,
-    createPDF
+    createPDF,
+    cronJobKeepServerLive
 }
