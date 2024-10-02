@@ -5,7 +5,8 @@ const cron = require('node-cron');
 const token =process.env.TelegramBotToken;
 const {saveTelegramUser} = require('./controllers/userController');
 const User = require('./model/User');
-const {saveUserJournal,getSingleUserJournal,getUserJournalRange,createPDF,cronJobKeepServerLive} = require('./controllers/chatController');
+const userJournal = require('./model/userJournal');
+const {saveUserJournal,getSingleUserJournal,getUserJournalRange,createPDF,cronJobKeepServerLive,deleteUser} = require('./controllers/chatController');
 
 const bot = new TelegramBot(token, {polling: true});
 
@@ -23,7 +24,8 @@ const sendReminderToAllUsers =async ()=>{
   }
 };
 
-const task=  cron.schedule('00 20 * * *', () => {
+
+const task=  cron.schedule('0 20 * * *', () => {
   sendReminderToAllUsers();
   console.log('Sending Reminder to Users');
 },{
@@ -59,8 +61,7 @@ bot.on('message', (msg) => {
   } else if(messageText==='/stop'){
         bot.sendMessage(chatId, 'Goodbye!');
         try {
-          const user = User.findOne({chatId:chatId,username:username});
-          console.log("Deleted User :",username," successfully!");
+          deleteUser(chatId,username);
         } catch (error) {
             console.log(error);
         }

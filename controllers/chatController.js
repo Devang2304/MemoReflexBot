@@ -3,6 +3,8 @@ const userJournal = require('../model/userJournal');
 const PDFDocument = require('pdfkit');
 const fs = require('fs-extra');
 const cron = require('node-cron');
+const axios = require('axios');
+const dotenv = require('dotenv').config();
 
 
 
@@ -113,15 +115,37 @@ const convertTimestampToDate = (timestamp) =>{
     })
  }
 
+ const  pingServer= () => {
+  console.log(process.env.BACKEND_URI);
+    axios.get(process.env.BACKEND_URI)
+      .then(response => {
+        console.log('Ping successful:', response.status); 
+      })
+      .catch(error => {
+        console.error('Error pinging server:', error); 
+      });
+  }
+
  const cronJobKeepServerLive =cron.schedule('15 * * * *', () => {
     console.log('Keeping server live, CronJob Enabled to avoid server spin down');
+    pingServer();
   });
 
+  const deleteUser = async (chatId,username) =>{
+    try {
+      const user =await User.deleteOne({chatId:chatId});
+      const messagesUser =await  userJournal.deleteMany({messageId:chatId,userName:username});
+      console.log(messagesUser,user);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
 module.exports = {
     saveUserJournal,
     getSingleUserJournal,
     getUserJournalRange,
     createPDF,
-    cronJobKeepServerLive
+    cronJobKeepServerLive,
+    deleteUser
 }

@@ -22,6 +22,6 @@ connectDb().then(()=>{
 
 
 app.get('/cronJob',(req,res)=>{
-    res.send("CronJob Route");
+    console.log("Cron job triggered");
 })
 
